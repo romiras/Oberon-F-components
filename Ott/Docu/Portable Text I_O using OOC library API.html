@@ -1,0 +1,160 @@
+<!-- MHonArc v2.2.0 -->
+<!--X-Subject: Portable Text I/O using OOC library API -->
+<!--X-From: Ian Rae <ianrae@istar.ca> -->
+<!--X-Date:  28 Jan 98 5:11 MET -->
+<!--X-Message-Id: E0xxOqY&#45;0000Do&#45;00@mail1.toronto.istar.net -->
+<!--X-ContentType: text/plain -->
+<!--X-Head-End-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML//EN">
+<HTML>
+<HEAD>
+<TITLE>Portable Text I/O using OOC library API</TITLE>
+<LINK REV="made" HREF="mailto:ianrae@istar.ca">
+</HEAD>
+<BODY>
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00411.html">Date Prev</A>][<A HREF="msg00413.html">Date Next</A>][<A HREF="msg00409.html">Thread Prev</A>][<A HREF="msg00413.html">Thread Next</A>][<A HREF="maillist.html#00412">Date Index</A>][<A HREF="threads.html#00412">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>Portable Text I/O using OOC library API</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<UL>
+<LI><em>To</em>: <A HREF="mailto:ooc-list@informatik.uni-kl.de">ooc-list@informatik.uni-kl.de</A></LI>
+<LI><em>Subject</em>: Portable Text I/O using OOC library API</LI>
+<LI><em>From</em>: Ian Rae &lt;<A HREF="mailto:ianrae@istar.ca">ianrae@istar.ca</A>&gt;</LI>
+<LI><em>Date</em>: Tue, 27 Jan 1998 23:05:54 -0500</LI>
+<LI><em>MMDF-Warning</em>: Parse error in original version of preceding line at news.uni-kl.de</LI>
+</UL>
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+Apologies for the delay -- major power outages here over the last few
+weeks due to an ice storm.
+
+What I'm looking to do is create a text i/o library that will be available
+on all Oberons: V4, System 3, Black Box, POW, and OOC.
+This library will support reading &amp; writing of plaintext on various data
+locations -- ASCII text files, Oberon text documents, text in current
+"frame", etc. The benefit of this library is that Oberon utilities such as
+COCO or grep can be written once and used throughout the Oberon 
+community.
+
+I would like to use the text i/o portion of the OOC library as the API.
+This library would use the file prefix "OOC" to distinguish its modules
+and identify its heritage.
+
+Module OOCChannel
+-define the abstract types Channel, Reader, Writer
+
+Module OOCFiles
+-define the abstract classes File, Reader, and Writer that are extensions
+ of their counterparts in OOCChannel
+-define hidden concrete extensions of File, Reader, and Writer for the
+ following types of files:
+     -ASCII text files.  ie. native OS text files
+     -text documents of the target Oberon system.  For instance,
+     V4 Text files, BlackBox .ODC files, etc.
+     (Implementation would use the highest level classes available
+      in the target Oberon system. eg Texts in V4, etc)
+-locator procedures would create a File object appropriate to the
+ type of file being accessed.
+
+Module OOCTexts
+-define the abstract classes for accessing plaintext in the Text
+ object of the target Oberon system.  eg. TextModels in BlackBox,
+ Text in V4, etc
+-these classes (Text, Reader, and Writer) would be concrete extensions
+ of their counterparts in Channel
+-locators will be available to "open" the current frame, or the selected
+ text, etc
+
+Modules OOCTextRider and OOCBinaryRider
+-define mapper classes that can connect to any OOCChannel
+-should be usable with only minor changes from OOC library version
+
+Module OOCProgramArgs and OOCStdChannels
+-I'm not sure if these notions exist in most Oberon system?
+
+Module OOCLogs
+-support writing to the Log via a OOCChannel
+
+
+Questions
+--------------
+1. Do I need your permission to use portions of the OOC library?
+I would be publishing my library under GPL or whatever public
+domain approach makes sense.
+
+Answers to Previous Post
+--------------------------------------
+Michael van Acken wrote:
+&gt;One fundamental question: As you said the OOC io routines fit youur
+&gt;needs. Does that mean that you simply want to extent them, to support
+&gt;OberonSystem files or do you want to build a layer on top of the io
+&gt;implementation of OOC. If you plan the second, isn't is possibly better
+&gt;to extent the OOC io routines? I currently don't have arguments for
+&gt;that (in fact I have some against it), but I feel the io ystem of OOC
+&gt;might gain more from the second aproach. I also don't like to build
+&gt;multiple layers on code, since the OOC io system is already a layer on
+&gt;the C/POSIX io system.
+
+I plan to extend the OOC io routines.  This is intended to be a very
+thin layer that doesn't re-implement the existing io functionality in
+Oberon systems.  Yes, it is another layer but the goal here is
+portability not performance (although I don't expect a large
+overhead in this "layer").
+
+
+--Ian
+
+
+
+</PRE>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<UL><LI><STRONG>Follow-Ups</STRONG>:
+<UL>
+<LI><STRONG><A NAME="00413" HREF="msg00413.html">Re: Portable Text I/O using OOC library API</A></STRONG>
+<UL><LI><EM>From:</EM> Michael van Acken &lt;mvacken@t-online.de&gt;</LI></UL></LI>
+</UL></LI></UL>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00411.html">Re: OOC Garbage Collector Proposal</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00413.html">Re: Portable Text I/O using OOC library API</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00409.html">Unix specific (was Re: OOC Garbage Collector Proposal)</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00413.html">Re: Portable Text I/O using OOC library API</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="maillist.html#00412"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="threads.html#00412"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<!--X-User-Footer-End-->
+</BODY>
+</HTML>
