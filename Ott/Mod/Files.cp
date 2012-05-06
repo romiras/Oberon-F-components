@@ -155,29 +155,24 @@ CONST
      always get an `access denied' error *)
 (*--- concrete File ---*)
 TYPE
-  File* = POINTER TO FileDesc;
-  FileDesc* = EXTENSIBLE RECORD
-    (Ch.ChannelDesc)
-	frep-: Files.File;
-	isTmp: BOOLEAN;  	(* whether created by Tmp.  Reset by Register *)
-	tmpName: Files.Name; (* used by Tmp for later call to Register.  *)
-  END;
+	File* = POINTER TO FileDesc;
+	FileDesc* = EXTENSIBLE RECORD (Ch.ChannelDesc)
+		frep-: Files.File;
+		isTmp: BOOLEAN;  	(* whether created by Tmp.  Reset by Register *)
+		tmpName: Files.Name; (* used by Tmp for later call to Register.  *)
+	END;
 
-TYPE
-  Reader* =  POINTER TO ReaderDesc;
-  ReaderDesc* = EXTENSIBLE RECORD
-    (Ch.ReaderDesc)
-	frdr:	Files.Reader;
-	offset:    INTEGER;  
-  END;
+	Reader* =  POINTER TO ReaderDesc;
+	ReaderDesc* = EXTENSIBLE RECORD (Ch.ReaderDesc)
+		frdr:	Files.Reader;
+		offset:    INTEGER;  
+	END;
 
-TYPE
-  Writer* = POINTER TO WriterDesc;
-  WriterDesc* = EXTENSIBLE RECORD 
-    (Ch.WriterDesc)
-	fwriter:	Files.Writer;
-	offset:    INTEGER;  (* 0 .. (end - beg) *)
-  END;
+	Writer* = POINTER TO WriterDesc;
+	WriterDesc* = EXTENSIBLE RECORD (Ch.WriterDesc)
+		fwriter:	Files.Writer;
+		offset:    INTEGER;  (* 0 .. (end - beg) *)
+	END;
 
 (*===========================================================*)
 (* BYTE, CHAR conversion routines *)
@@ -211,10 +206,10 @@ PROCEDURE ErrorDescr* (res: INTEGER; VAR descr: ARRAY OF CHAR);
    suffice).
    If `res=done', then `descr' is assigned the empty string.  Note: You should
    use the type-bound ErrorDescr procedures instead whenever possible.  *)
-  VAR
-    str: ARRAY 128 OF CHAR;
-  BEGIN
-    CASE res OF
+VAR
+	str: ARRAY 128 OF CHAR;
+BEGIN
+	CASE res OF
 	| accessDenied:	str := "Access denied."
 	| isDirectory:		str := "Can't get write access to directory file."
 	| tooManyFiles:	str := "Too many open files at the moment."
@@ -227,13 +222,13 @@ PROCEDURE ErrorDescr* (res: INTEGER; VAR descr: ARRAY OF CHAR);
 	| dirWriteDenied:	str := "Don't have write permission for directory."
 	| fileError:			str := "Failed to open the file."
 	| nameTooLong:	str := "The file name or one of its components is too long."
-    | notDirectory:		str := "A directory component of the file name exists, but isn't a directory"
+	| notDirectory:		str := "A directory component of the file name exists, but isn't a directory"
 	| linkLoop:		    str := "Resolved too many symbolic links while looking up the file"
-    | notImplemented:   str := "Requested function not implemented."
-    ELSE
-	Ch.ErrorDescr(res, str)
-    END;
-   OttOSA.COPY(str, descr);
+	| notImplemented:   str := "Requested function not implemented."
+	ELSE
+		Ch.ErrorDescr(res, str)
+	END;
+	OttOSA.COPY(str, descr);
 END ErrorDescr;
  
 
@@ -244,27 +239,27 @@ END ErrorDescr;
 PROCEDURE (r: Reader) AssertValid(), NEW, EXTENSIBLE;  (* private *)
 (* check for invariant *)
 BEGIN
-ASSERT(r.offset >= 0, 100);
-(* can't check against underlying text model because it can be changed at
-any time by other clients *)
-ASSERT(r.frdr # NIL, 100);
+	ASSERT(r.offset >= 0, 100);
+	(* can't check against underlying text model because it can be changed at
+	any time by other clients *)
+	ASSERT(r.frdr # NIL, 100);
 END AssertValid;
 
 PROCEDURE (w: Writer) AssertValid(), NEW, EXTENSIBLE;  (* private *)
 (* check for invariant *)
 BEGIN
-ASSERT(w.offset >= 0, 100);
-(* can't check against underlying text model because it can be changed at
-any time by other clients *)
-ASSERT(w.fwriter # NIL, 100);
+	ASSERT(w.offset >= 0, 100);
+	(* can't check against underlying text model because it can be changed at
+	any time by other clients *)
+	ASSERT(w.fwriter # NIL, 100);
 END AssertValid;
 
 PROCEDURE (f: File) AssertValid(), NEW;  (* private *)
 (* check for invariant *)
 BEGIN
-(* can't check against underlying text model because it can be changed at
-any time by other clients *)
-ASSERT(f.frep # NIL, 100);
+	(* can't check against underlying text model because it can be changed at
+	any time by other clients *)
+	ASSERT(f.frep # NIL, 100);
 END AssertValid;
 
 (*****************************************************************************************)
@@ -277,19 +272,19 @@ PROCEDURE (f: File) Length*(): LONGINT, EXTENSIBLE;
 (* Result is the number of bytes of data that this channel refers to.  If `ch'
    represents a file, then this value is the file's size.  If `ch' has no fixed
    length (e.g. because it's interactive), the result is `noLength'.  *)
-  BEGIN
-	RETURN f.frep.Length();
-  END Length;
+BEGIN
+	RETURN f.frep.Length()
+END Length;
   
 PROCEDURE (f: File) GetModTime* (VAR mtime: INTEGER (*Time.TimeStamp*));
 (* Retrieves the modification time of the data accessed by the given channel.
    If no such information is avaiblable, `ch.res' is set to `noModTime', 
    otherwise to `done'.  *)
-  BEGIN
+BEGIN
 	mtime := 0; (* do later, bbox has no getmodtime!! *)
 	f.res := (Ch.noModTime);
-	f.AssertValid();
-  END GetModTime;
+	f.AssertValid()
+END GetModTime;
 
 
 PROCEDURE (f: File) Register*, NEW, EXTENSIBLE;
@@ -307,8 +302,8 @@ PROCEDURE (f: File) Register*, NEW, EXTENSIBLE;
 	BBox implementation: File is closed after Register.
 *)
 VAR
- name: Files.Name; extension: Files.Type;
- resForTheFile: INTEGER;
+	name: Files.Name; extension: Files.Type;
+	resForTheFile: INTEGER;
 BEGIN
 	IF ~f.open  THEN
 		f.res := (channelClosed)
@@ -317,8 +312,8 @@ BEGIN
 			f.res := (anonymousFile)
 		ELSE
 			name := f.tmpName;
-			OttOSA.GetFileExtension(name, name, extension);		
-			f.frep.Register(name, extension, resForTheFile); 
+			OttOSA.GetFileExtension(name, name, extension);
+			f.frep.Register(name, extension, Files.dontAsk, resForTheFile); 
 			f.frep.Close;
 			IF resForTheFile # 0 THEN
 				CASE resForTheFile OF
@@ -403,18 +398,18 @@ PROCEDURE (f: File) Flush*, EXTENSIBLE;
    case.  
    BBox Files: flush has no error return;
 *)
-  BEGIN
+BEGIN
 	f.frep.Flush();
-     f. ClearError
-  END Flush;
+	f. ClearError
+END Flush;
 
 PROCEDURE (f: File) Close*;
 VAR res: INTEGER;
 BEGIN 
-IF f # NIL THEN
-	f.frep.Close;
-	f.open := (FALSE);
-END
+	IF f # NIL THEN
+		f.frep.Close;
+		f.open := (FALSE);
+	END
 END Close;
 (* Flushes all buffers associated with `f', closes the file, and frees all
    system resources allocated to it.  This invalidates all riders attached to
@@ -432,9 +427,9 @@ PROCEDURE (f: File) ErrorDescr* (VAR descr: ARRAY OF CHAR);
    punctuation.  `descr' should be large enough to hold a multi-line message 
    (256 characters should suffice).
    If `r.res = done', then `descr' is assigned the empty string.  *)
-  BEGIN
-    ErrorDescr (f. res, descr)
-  END ErrorDescr;
+BEGIN
+	ErrorDescr (f. res, descr)
+END ErrorDescr;
 
 (* ClearError inherited??!! *)
 
@@ -445,14 +440,14 @@ PROCEDURE (r: Reader) Pos*(): LONGINT;
    next call to ReadByte resp. ReadBytes.  This procedure will return 
    `noPosition' if the reader has no concept of a reading position (e.g. if it
    corresponds to input from keyboard), otherwise the result is not negative.*)
-  BEGIN
+BEGIN
 	IF r.base.open THEN
 		r.AssertValid();
 		RETURN r.offset
 	ELSE
 		RETURN 0;
 	END
-  END Pos;
+END Pos;
 
 PROCEDURE (r: Reader) Available*(): LONGINT;
 (* Returns the number of bytes available for the next reading operation.  For
@@ -465,21 +460,21 @@ PROCEDURE (r: Reader) Available*(): LONGINT;
    Note that the number of bytes returned is always a lower approximation of
    the number that could be read at once; for some channels or systems it might
    be as low as 1 even if tons of bytes are waiting to be processed.  *)
- 	VAR
+VAR
 	i: LONGINT;
-  BEGIN
-    IF r. base. open THEN
-      i := r. base. Length() - r. Pos();
-	r.AssertValid();
-      IF (i < 0) THEN
-        RETURN 0
-      ELSE
-        RETURN i
-      END
-    ELSE
-      RETURN -1
-    END
-  END Available;
+BEGIN
+	IF r. base. open THEN
+		i := r. base. Length() - r. Pos();
+		r.AssertValid();
+		IF (i < 0) THEN
+			RETURN 0
+		ELSE
+			RETURN i
+		END
+	ELSE
+		RETURN -1
+	END
+END Available;
 
 PROCEDURE (r: Reader) SetPos* (newPos: LONGINT), EXTENSIBLE;
 (* Sets the reading position to `newPos'.  A negative value of `newPos' or 
@@ -492,26 +487,26 @@ PROCEDURE (r: Reader) SetPos* (newPos: LONGINT), EXTENSIBLE;
    Calls to this procedure while `r.res # done' will be ignored, in particular
    a call with `r.res = readAfterEnd' error will not reset `res' to `done'. *)
 	VAR len : INTEGER; (* phys len of txt model *)
-  BEGIN
-    IF (r. res = Ch.done) THEN
-      IF ~r. positionable OR (newPos < 0) THEN
-        r. res :=  (Ch.outOfRange)
-      ELSIF r. base. open THEN
-	 	r.offset := SHORT(newPos);  (* offset can have any range >= 0 *)
-	
-		(* underlying txtmdl pos must lie within its length *)
-	 	len := r.base(File).frep.Length();
-	 	IF r.offset > len THEN
-			r.frdr.SetPos(len);
-		ELSE
-			r.frdr.SetPos(r.offset);
-		 END;
-      ELSE  (* channel has been closed *)
-        r. res :=  (Ch.channelClosed)
-      END
-    END;
-	r.AssertValid();
-  END SetPos;
+BEGIN
+	IF (r. res = Ch.done) THEN
+		IF ~r. positionable OR (newPos < 0) THEN
+			r. res :=  (Ch.outOfRange)
+		ELSIF r. base. open THEN
+			r.offset := SHORT(newPos);  (* offset can have any range >= 0 *)
+
+			(* underlying txtmdl pos must lie within its length *)
+			len := r.base(File).frep.Length();
+			IF r.offset > len THEN
+				r.frdr.SetPos(len);
+			ELSE
+				r.frdr.SetPos(r.offset);
+			END
+		ELSE  (* channel has been closed *)
+			r. res :=  (Ch.channelClosed)
+		END
+	END;
+	r.AssertValid()
+END SetPos;
 
 PROCEDURE (r: Reader) ReadByte* (VAR x: CHAR), EXTENSIBLE;
 (* Reads a single byte from the channel `r.base' at the reading position 
@@ -525,27 +520,27 @@ PROCEDURE (r: Reader) ReadByte* (VAR x: CHAR), EXTENSIBLE;
 they will read a 0 byte before noticing the end of text.  Fix is to call r.frdr.text.Length()
  each time since r.frdr.eof is not reliable.*)
 VAR byt: BYTE;
-  BEGIN
-    IF (r. res = Ch.done) THEN
-      IF r. base. open THEN
-		IF (r.Available() > 0) & (~r.frdr.eof) THEN 
-			r.frdr.ReadByte(byt); 
-			x := ByteToChar(byt);
-			r.bytesRead := (1);  INC(r.offset);
-		ELSE
-			x := 0X;
-			r.bytesRead := (0);
-			r.res := (Ch.readAfterEnd);
+BEGIN
+	IF (r. res = Ch.done) THEN
+		IF r. base. open THEN
+			IF (r.Available() > 0) & (~r.frdr.eof) THEN 
+				r.frdr.ReadByte(byt); 
+				x := ByteToChar(byt);
+				r.bytesRead := (1);  INC(r.offset);
+			ELSE
+				x := 0X;
+				r.bytesRead := (0);
+				r.res := (Ch.readAfterEnd);
+			END
+		ELSE  (* channel has been closed *)
+			r. res :=  (Ch.channelClosed);
+			r. bytesRead :=  (0)
 		END
-      ELSE  (* channel has been closed *)
-        r. res :=  (Ch.channelClosed);
-        r. bytesRead :=  (0)
-      END
-    ELSE
-      r. bytesRead :=  (0)
-    END;
+	ELSE
+		r. bytesRead :=  (0)
+	END;
 	r.AssertValid();
-  END ReadByte;
+END ReadByte;
 
 PROCEDURE (r: Reader) ReadBytes* (VAR x: ARRAY OF CHAR; 
                                   start, n: LONGINT), EXTENSIBLE;
@@ -560,43 +555,43 @@ PROCEDURE (r: Reader) ReadBytes* (VAR x: ARRAY OF CHAR;
 NOTE. impl limits n to MAX(INTEGER)
    pre: (n >= 0) & (0 <= start) & (start+n <= LEN (x)) *)
 	VAR avail, i, numToRead: LONGINT; byt: BYTE;
-  BEGIN
-    ASSERT ((n >= 0) & (0 <= start) & (start+n <= LEN (x)));
-    IF (r. res = Ch.done) THEN
-      IF r. base. open THEN
-		avail := r.Available();
-		numToRead := n;
-		IF avail < n THEN numToRead := avail END;
-		i := 0;
-(*		Log.String("zxxxx"); Log.Int(r.frdr.Base().Length()); Log.Ln;*)
-		LOOP
-			IF (i = numToRead) OR r.frdr.eof THEN EXIT END;
-			r.frdr.ReadByte(byt); 
-			x[SHORT(start + i)] := ByteToChar(byt);
-			INC(i);
-		END;
-(*		Log.Int(SHORT(i));*)
-		IF i > 0 THEN	(* read something? *)
-			IF i = n THEN
-				r.bytesRead := (n);  INC(r.offset, n);
+BEGIN
+	ASSERT ((n >= 0) & (0 <= start) & (start+n <= LEN (x)));
+	IF (r. res = Ch.done) THEN
+		IF r. base. open THEN
+			avail := r.Available();
+			numToRead := n;
+			IF avail < n THEN numToRead := avail END;
+			i := 0;
+(*			Log.String("zxxxx"); Log.Int(r.frdr.Base().Length()); Log.Ln;*)
+			LOOP
+				IF (i = numToRead) OR r.frdr.eof THEN EXIT END;
+				r.frdr.ReadByte(byt); 
+				x[SHORT(start + i)] := ByteToChar(byt);
+				INC(i);
+			END;
+	(*		Log.Int(SHORT(i));*)
+			IF i > 0 THEN	(* read something? *)
+				IF i = n THEN
+					r.bytesRead := (n);  INC(r.offset, n);
+				ELSE
+					ASSERT(i < n);
+					r.bytesRead := (i);  INC(r.offset, i);
+					r.res := (Ch.readAfterEnd);
+				END
 			ELSE
-				ASSERT(i < n);
-				r.bytesRead := (i);  INC(r.offset, i);
+				r.bytesRead := (0);
 				r.res := (Ch.readAfterEnd);
-			END
-		ELSE
-			r.bytesRead := (0);
-			r.res := (Ch.readAfterEnd);
-		END 
-      ELSE  (* channel has been closed *)
-        r. res :=  (Ch.channelClosed);
-        r. bytesRead :=  (0)
-      END
-    ELSE
-      r. bytesRead :=  (0)
+			END 
+		ELSE  (* channel has been closed *)
+			r. res :=  (Ch.channelClosed);
+			r. bytesRead :=  (0)
+		END
+	ELSE
+		r. bytesRead :=  (0)
 	END;
-	r.AssertValid();
-  END ReadBytes;
+	r.AssertValid()
+END ReadBytes;
 
 PROCEDURE (r: Reader) ErrorDescr* (VAR descr: ARRAY OF CHAR);
 (* Retrieves a descriptive error message string stating the reason why one of
@@ -605,9 +600,9 @@ PROCEDURE (r: Reader) ErrorDescr* (VAR descr: ARRAY OF CHAR);
    punctuation.  `descr' should be large enough to hold a multi-line message 
    (256 characters should suffice).
    If `r.res = done', then `descr' is assigned the empty string.  *)
-  BEGIN
-    ErrorDescr (r. res, descr)
-  END ErrorDescr;
+BEGIN
+	ErrorDescr (r. res, descr)
+END ErrorDescr;
 
 
 (*===========================================================*)
@@ -638,22 +633,22 @@ PROCEDURE (w: Writer) SetPos* (newPos: LONGINT), EXTENSIBLE;
    newPos must fit in INTEGER!!!
    Calls to this procedure while `w.res # done' will be ignored.  *)
 	VAR len : INTEGER; (* phys len of txt model *)
-  BEGIN
-    IF (w. res = Ch.done) THEN
-      IF ~w. positionable OR (newPos < 0) THEN
-        w. res :=  (Ch.outOfRange)
-      ELSIF w. base. open THEN
-	 	w.offset := SHORT(newPos);
-		(* underlying frep pos must lie within its length *)
-	 	len := w.base(File).frep.Length();
-	 	IF w.offset > len THEN
-			w.fwriter.SetPos(len);
-		ELSE
-			w.fwriter.SetPos(w.offset);
-		 END;
-      ELSE  (* channel has been closed *)
-        w. res :=  (Ch.channelClosed)
-      END
+BEGIN
+	IF (w. res = Ch.done) THEN
+    	IF ~w. positionable OR (newPos < 0) THEN
+			w. res :=  (Ch.outOfRange)
+		ELSIF w. base. open THEN
+			w.offset := SHORT(newPos);
+			(* underlying frep pos must lie within its length *)
+			len := w.base(File).frep.Length();
+			IF w.offset > len THEN
+				w.fwriter.SetPos(len);
+			ELSE
+				w.fwriter.SetPos(w.offset);
+			END;
+		ELSE  (* channel has been closed *)
+			w. res :=  (Ch.channelClosed)
+		END
     END
   END SetPos;
 
@@ -663,11 +658,11 @@ PROCEDURE (w: Writer) Pad (pad: CHAR; n: INTEGER),NEW, EXTENSIBLE;
 	VAR len : INTEGER; (* phys len of txt model *)
 		i: INTEGER; byt: BYTE;
   BEGIN
- 	len := w.base(File).frep.Length();
+	len := w.base(File).frep.Length();
 	w.fwriter.SetPos(len);
 	byt := CharToByte(pad);
 	FOR i := 0 TO n-1 DO
-   	  w.fwriter.WriteByte(byt);
+		w.fwriter.WriteByte(byt);
 	END;
 END Pad;
 
@@ -813,10 +808,10 @@ Comments.
  "//mylandir/mydir/abc.txt" Win95 connected lan drive
 *)
 VAR f: File;
- loc: Files.Locator;
- theFile : Files.File;
- shared : BOOLEAN;
- path, name : Files.Name;
+	loc: Files.Locator;
+	theFile : Files.File;
+	shared : BOOLEAN;
+	path, name : Files.Name;
 BEGIN 
      IF ~((read IN flags) OR (write IN flags) OR (tryRead IN flags) OR (tryWrite IN flags)) THEN
 		res := accessDenied ;
@@ -860,8 +855,8 @@ PROCEDURE New* (file: ARRAY OF CHAR; flags: SET; VAR res: INTEGER): File;
    Note that in terms of the Oberon System this procedure combines the 
    procedures New and Register.  *)
 VAR f: File;
- loc: Files.Locator; path, name: Files.Name; extension: Files.Type;
- theFile : Files.File;  resForTheFile: INTEGER;
+	loc: Files.Locator; path, name: Files.Name; extension: Files.Type;
+	theFile : Files.File;  resForTheFile: INTEGER;
 BEGIN 
      IF ~((read IN flags) OR (write IN flags) OR (tryRead IN flags) OR (tryWrite IN flags)) THEN
 		res := accessDenied ;
@@ -870,7 +865,7 @@ BEGIN
      OttOSA.FilenameSplit(file, path, name);
 	loc := Files.dir.This(path);
 	ASSERT(loc# NIL);
-	theFile := Files.dir.New(loc);
+	theFile := Files.dir.New(loc, Files.dontAsk);
 	IF (theFile = NIL) THEN
 		CASE loc.res OF
 			1,2:   res:= noSuchFile
@@ -880,7 +875,7 @@ BEGIN
 		RETURN NIL;
 	END;
 	OttOSA.GetFileExtension(name, name, extension);		
-	theFile.Register(name, extension, resForTheFile); 
+	theFile.Register(name, extension, Files.dontAsk, resForTheFile); 
 	theFile.Close;
 	IF resForTheFile # 0 THEN
 		CASE resForTheFile OF
@@ -918,14 +913,14 @@ VAR f: File;
  loc: Files.Locator; path, name: Files.Name;
  theFile : Files.File;
 BEGIN 
-     IF ~((read IN flags) OR (write IN flags) OR (tryRead IN flags) OR (tryWrite IN flags)) THEN
+	IF ~((read IN flags) OR (write IN flags) OR (tryRead IN flags) OR (tryWrite IN flags)) THEN
 		res := accessDenied ;
 		RETURN NIL;
 	END;
-     OttOSA.FilenameSplit(file, path, name);
+	OttOSA.FilenameSplit(file, path, name);
 	loc := Files.dir.This(path);
 	ASSERT(loc# NIL);
-	theFile := Files.dir.New(loc);
+	theFile := Files.dir.New(loc, Files.dontAsk);
 	IF (theFile = NIL) THEN
 		CASE loc.res OF
 			1,2:   res:= noSuchFile
@@ -971,11 +966,11 @@ PROCEDURE Exists* (file: ARRAY OF CHAR): BOOLEAN;
 (* Returns TRUE if a file `file' exists, FALSE otherwise. 
    ... will be changed to give more useful information on failure *)
 VAR
- loc: Files.Locator;
- theFile : Files.File;
- path, name : Files.Name;
+	loc: Files.Locator;
+	theFile : Files.File;
+	path, name : Files.Name;
 BEGIN 
-     OttOSA.FilenameSplit(file, path, name);
+	OttOSA.FilenameSplit(file, path, name);
 	loc := Files.dir.This(path);
 	theFile := Files.dir.Old(loc, name, TRUE);
 	RETURN (theFile # NIL); (* FALSE may indicate other error than file-not-exist! *)
