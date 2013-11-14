@@ -1,0 +1,44 @@
+<!-- Oberon eXchange Format (OXF) -->
+<?xml version="1.0" encoding="UTF-8" ?>
+<content>
+  <source>Oberon/F</source>
+</content>
+<body>Lorem ipsum
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ac nisl quis arcu condimentum tempus. Nullam consectetur nisl nec arcu convallis non vehicula magna euismod. Aenean vitae nunc nec sapien iaculis vehicula sit amet nec felis. Nullam eget nisi nec lacus euismod consequat. Pellentesque justo dolor, tempus ut aliquam cursus, vehicula sed nulla. Duis mollis lobortis dolor eu ultrices. Phasellus semper convallis venenatis.
+
+In imperdiet, libero ut suscipit rhoncus, velit nunc condimentum nisl, in mollis arcu velit at sem. In ac justo nunc. Praesent arcu sem, pretium quis adipiscing non, accumsan in tellus. Donec molestie blandit leo, a congue risus egestas a. Mauris et urna eu ligula vestibulum molestie. Duis gravida mi at erat volutpat pulvinar. Vestibulum nec orci at diam facilisis egestas. Sed luctus commodo enim, vitae ultrices orci facilisis nec. Donec dignissim, sem nec ultricies venenatis, eros diam hendrerit metus, non faucibus mauris enim id sapien. Vivamus id est orci. Cras in augue ac massa volutpat euismod et vel magna. Nulla pretium semper dolor et pulvinar. Fusce tempus condimentum augue nec ullamcorper. Sed volutpat lacinia mollis.
+
+MyCommand.Do par1 par2 par3
+
+Fold text
+
+Text</body>
+<meta>
+  <tokenlist>
+    <token pos="ADFF" type="text">
+       <textstyle fontsize="24" attr="bold" />
+    </token>
+    <token pos="FBCD" type="text">
+       <textstyle fontsize="10" attr="bold,italic" />
+    </token>
+    <token pos="FBED" type="text">
+       <textstyle fontsize="10" attr="default" />
+    </token>
+    <token pos="FE01" type="text">
+       <textstyle fontsize="8" attr="default" />
+    </token>
+    <token pos="FEC3" type="command">
+       <data>MyCommand.Do par1 par2 par3</data>
+    </token>
+    <token pos="FFC3" type="fold">
+       <data>Hidden fold text</data>
+    </token>
+    <token pos="1B293" type="timestamp">
+       <data>21-Jan-2013</data>
+    </token>
+    <token pos="1CE01" type="text">
+       <textstyle fontsize="10" attr="default" />
+    </token>
+  </tokenlist>
+</meta>
