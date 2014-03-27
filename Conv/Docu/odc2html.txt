@@ -1,0 +1,6 @@
+H1 - 24pt,FONT SIZE="6"
+H2 - 18pt,FONT SIZE="5"
+H3 - 14pt,FONT SIZE="4"
+H4 - 12pt,FONT SIZE="3"
+H5 - 10pt,FONT SIZE="2"
+H6 - 8pt,FONT SIZE="1"

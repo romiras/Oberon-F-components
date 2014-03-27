@@ -1,0 +1,25 @@
+Export to DokuWiki markup syntax
+
+A module ConvDokuWikiExporter allows to export BlackBox Oberon/F documents to DokuWiki markup syntax
+Based on HostTextConv.ConvertToRichText (BBCB 1.6 RC5)
+
+Contributed by Romiras at Nov 2012
+
+Interface
+
+DEFINITION ConvDokuWikiExporter;
+
+	PROCEDURE ExportDocu; (* Export documentation *)
+	PROCEDURE ExportMod; (* Export source code *)
+
+END ConvDokuWikiExporter.
+
+Usage
+
+ConvDokuWikiExporter.ExportDocu
+ConvDokuWikiExporter.ExportMod
+
+Notes
+This converter is experimental.
+1. In documentation documents (Docu/..) incorrectly handles an embedded source code by applying style in markup that leads to "dirty" code.
+2. In some cases converter incorrectly handles headers with bold style.

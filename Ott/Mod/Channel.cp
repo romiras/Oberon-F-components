@@ -1,6 +1,3 @@
-(* 	$Id: Channel.Mod,v 1.6 1998/06/02 19:14:18 acken Exp $	 *)
-(****TLIB keywords*** "%n %v %f" *)
-(* "CHANNEL.MOD 1.2 22-Jul-98,04:55:52" *)
 MODULE OttChannel;
 (*  Provides abstract data types Channel, Reader, and Writer for stream I/O.
     Copyright (C) 1997, 1998  Michael van Acken
@@ -92,8 +89,6 @@ read-only.
 *)
 
 (* Warnings := FALSE *)
-IMPORT OttOSA;
-(*  SYSTEM, Strings, Time; !!*)
 
 CONST
   noLength* = -1;
@@ -283,7 +278,7 @@ PROCEDURE ErrorDescr* (res: INTEGER; VAR descr: ARRAY OF CHAR);
     ELSE
       str := "[unknown error code]"
     END;
-    OttOSA.COPY(str, descr);
+	descr := str$
   END ErrorDescr;
   
 
